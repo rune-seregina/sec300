@@ -1,0 +1,107 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-left">
+    <h1 class="display-4">First Inputs</h1>
+    <p>Here is the first form to be submitted:</p>
+
+    <form id="registrationForm" method="post">
+        <!--Here is a text box -->
+        <label for="firstName">First Name:</label>
+        <input asp-for="firstName" class="item" type="text" placeholder="Jane Doe" minlength="2" maxlength="14" required>
+        <span asp-validation-for="firstName" class="text-danger"></span>
+
+        <br><br>
+        <!--Here is an email input -->
+        <label for="email">Email Address:</label>
+        <input asp-for="email" class="form-control" type="email" placeholder="example@example.com" oninput="validateEmail(this)" required maxlength="254"
+               pattern="^[a-zA-Z0-9._%+-]+&#64;[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+               title="Please enter a valid email address" />
+        <span asp-validation-for="email" class="text-danger"></span>
+        <script>
+            function validateEmail(input) {
+                var errorSpan = document.getElementById('emailError');
+                if (input.validity.typeMismatch) {
+                    errorSpan.textContent = 'Please enter a valid email address';
+                } else {
+                    errorSpan.textContent = '';
+                }
+            }
+        </script>
+
+        <br><br>
+        <!--The button to submit-->
+        <button type="submit" class="form-textbox">Submit</button>
+      
+    </form>
+
+    <div class="text-left">
+        Your Selections
+        <br><br>
+        First name: @Model.firstName
+        <br><br>
+        Email: @Model.email
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $("#registrationForm").validate({
+                rules: {
+                    email: {
+                        required: true,
+                        email: true,
+                        pattern=("^[a-zA-Z0-9._%+-]+&#64;[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")"
+                        maxlength: 254
+                    },
+                    firstName: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 14
+                    }
+                },
+                messages: {
+                    email: {
+                        required: "Email is required",
+                        email: "Please enter a valid email address",
+                        pattern: "Please enter a valid email address",
+                        maxlength: "Email address cannot exceed 254 characters"
+                    },
+                    firstName: {
+                        required: "First name is required",
+                        minlength: "First name must be at least 2 characters long",
+                        maxlength: "First name cannot be more than 14 characters long"
+                    }
+                },
+                errorElement: "span",
+                errorClass: "text-danger",
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass("is-invalid").removeClass("is-valid");
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).addClass("is-valid").removeClass("is-invalid");
+                },
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element);
+                }
+            });
+            $("#email").on("input", function() {
+                var email = $(this).val();
+                var parts = email.split('&#64;');
+                if (parts.length === 2) {
+                    if (parts[0].length > 64) {
+                        $("#emailCustomError").text("The local part of the email cannot exceed 64 characters");
+                    } else if (parts[1].length > 255) {
+                        $("#emailCustomError").text("The domain part of the email cannot exceed 255 characters");
+                    } else {
+                        $("#emailCustomError").text("");
+                    }
+                }
+            });
+        });
+    </script>
+}
