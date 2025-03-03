@@ -1,0 +1,30 @@
+@page "/Shared/Confirmation"
+@model ConfirmationModel
+@{
+    ViewData["Title"] = "Confirmation";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Email Confirmation</h2>
+
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert @(Model.Message.Contains("successful") ? "alert-success" : "alert-danger")">
+                    <p>@Model.Message</p>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.FirstName) && !string.IsNullOrEmpty(Model.Email))
+            {
+                <p><strong>First Name:</strong> @Model.FirstName</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+            }
+
+            <div class="text-center mt-4">
+                <a asp-page="/Index" class="btn btn-primary">Return to Home Page</a>
+            </div>
+        </div>
+    </div>
+</div>
